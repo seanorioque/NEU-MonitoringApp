@@ -58,7 +58,8 @@ const AppShell: React.FC = () => {
     } finally {
       setMoasLoading(false);
     }
-  }, [currentUser]);
+  // eslint-disable-next-line
+  }, [currentUser?.uid, currentUser?.role]);
 
   useEffect(() => { fetchMOAs(); }, [fetchMOAs]);
 

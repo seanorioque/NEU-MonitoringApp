@@ -34,9 +34,9 @@ export const useAuth = () => {
 // Format:  'UID_HERE': 'admin' | 'faculty' | 'student'
 //
 const UID_ROLES: Record<string, UserRole> = {
-  'REPLACE_WITH_UID_1': 'admin',
-  'REPLACE_WITH_UID_2': 'faculty',
-  'REPLACE_WITH_UID_3': 'student',
+  '2AwrmRHKM6Rqlud8pTFpQAtPteu2': 'admin',
+  'VuOa7CD7obf3wu9qiSVtWM4eUVh1': 'faculty',
+  's0Ipm0PWoIRlHgMLBoG9ywXdrlJ3': 'student',
   // add more as needed...
 };
 // ─────────────────────────────────────────────────────────────────────────────

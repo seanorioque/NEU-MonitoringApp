@@ -12,14 +12,23 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
 
-  const filtered = useMemo(() => moas.filter(m => {
-    if (m.isDeleted) return false;
-    if (userRole === 'student' && getStatusGroup(m.status) !== 'APPROVED') return false;
-    if (collegeFilter !== 'ALL' && m.endorsedByCollege !== collegeFilter) return false;
-    if (dateFrom && m.effectiveDate < new Date(dateFrom)) return false;
-    if (dateTo && m.effectiveDate > new Date(dateTo)) return false;
-    return true;
-  }), [moas, collegeFilter, dateFrom, dateTo, userRole]);
+  // First apply role-based filter, then user-selected filters
+  const filtered = useMemo(() => {
+    return moas.filter(m => {
+      // Always exclude deleted
+      if (m.isDeleted) return false;
+
+      // Student only sees APPROVED statuses
+      if (userRole === 'student' && getStatusGroup(m.status) !== 'APPROVED') return false;
+
+      // User-selected filters
+      if (collegeFilter !== 'ALL' && m.endorsedByCollege !== collegeFilter) return false;
+      if (dateFrom && m.effectiveDate < new Date(dateFrom)) return false;
+      if (dateTo && m.effectiveDate > new Date(dateTo)) return false;
+
+      return true;
+    });
+  }, [moas, userRole, collegeFilter, dateFrom, dateTo]);
 
   const stats = useMemo(() => ({
     approved:   filtered.filter(m => getStatusGroup(m.status) === 'APPROVED').length,
@@ -43,15 +52,21 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
 
   const hasFilters = collegeFilter !== 'ALL' || dateFrom || dateTo;
 
-  const statCards = [
-    { label: 'Active & Approved', value: stats.approved, icon: CheckCircle2, accent: '#10B981', lightBg: '#F0FDF4', border: '#BBF7D0' },
-    { label: 'In Processing',     value: stats.processing, icon: Clock,        accent: '#F59E0B', lightBg: '#FFFBEB', border: '#FDE68A' },
-    { label: 'Expiring Soon',     value: stats.expiring,   icon: AlertTriangle, accent: '#F97316', lightBg: '#FFF7ED', border: '#FED7AA' },
-    { label: 'Expired',           value: stats.expired,    icon: XCircle,       accent: '#EF4444', lightBg: '#FEF2F2', border: '#FECACA' },
-  ];
+  // Student only sees approved stat card, others see all 4
+  const statCards = userRole === 'student'
+    ? [{ label: 'Active & Approved', value: stats.approved, icon: CheckCircle2, accent: '#10B981', lightBg: '#F0FDF4', border: '#BBF7D0' }]
+    : [
+        { label: 'Active & Approved', value: stats.approved,   icon: CheckCircle2,  accent: '#10B981', lightBg: '#F0FDF4', border: '#BBF7D0' },
+        { label: 'In Processing',     value: stats.processing, icon: Clock,         accent: '#F59E0B', lightBg: '#FFFBEB', border: '#FDE68A' },
+        { label: 'Expiring Soon',     value: stats.expiring,   icon: AlertTriangle, accent: '#F97316', lightBg: '#FFF7ED', border: '#FED7AA' },
+        { label: 'Expired',           value: stats.expired,    icon: XCircle,       accent: '#EF4444', lightBg: '#FEF2F2', border: '#FECACA' },
+      ];
+
+  const gridCols = userRole === 'student' ? '1fr' : 'repeat(4, 1fr)';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
       {/* Header */}
       <div className="page-header">
         <div>
@@ -66,6 +81,16 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
         </div>
       </div>
 
+      {/* Role badge */}
+      {userRole === 'student' && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '10px', background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+          <CheckCircle2 size={14} color="#16A34A" />
+          <span style={{ fontSize: '12px', color: '#15803D', fontWeight: 500 }}>
+            Showing approved MOAs only — contact admin for full access
+          </span>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="section-card" style={{ padding: '14px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -73,7 +98,10 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
             <Filter size={13} color="#C9A84C" />
             <span style={{ fontSize: '11px', fontWeight: 600, color: '#8B7355', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Filter</span>
           </div>
-          <select value={collegeFilter} onChange={e => setCollegeFilter(e.target.value as College | 'ALL')} className="neu-input" style={{ width: 'auto', minWidth: '140px' }}>
+          <select
+            value={collegeFilter}
+            onChange={e => setCollegeFilter(e.target.value as College | 'ALL')}
+            className="neu-input" style={{ width: 'auto', minWidth: '140px' }}>
             <option value="ALL">All Colleges</option>
             {COLLEGES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -81,8 +109,9 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
           <span style={{ color: '#8B7355', fontSize: '12px' }}>—</span>
           <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="neu-input" style={{ width: 'auto' }} />
           {hasFilters && (
-            <button onClick={() => { setCollegeFilter('ALL'); setDateFrom(''); setDateTo(''); }}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 10px', borderRadius: '8px', border: '1px solid #EDE5D8', background: 'white', color: '#8B7355', fontSize: '12px', cursor: 'pointer' }}>
+            <button
+              onClick={() => { setCollegeFilter('ALL'); setDateFrom(''); setDateTo(''); }}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 10px', borderRadius: '8px', border: '1px solid #EDE5D8', background: 'white', color: '#8B7355', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit' }}>
               <X size={12} /> Clear
             </button>
           )}
@@ -90,10 +119,14 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
       </div>
 
       {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: gridCols, gap: '14px' }}>
         {statCards.map(({ label, value, icon: Icon, accent, lightBg, border }, i) => (
-          <motion.div key={label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-            style={{ background: lightBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '18px', position: 'relative', overflow: 'hidden', cursor: 'default' }}
+          <motion.div
+            key={label}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.07 }}
+            style={{ background: lightBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '18px', position: 'relative', overflow: 'hidden' }}
             whileHover={{ y: -2, boxShadow: `0 8px 24px ${accent}20` }}
           >
             <div style={{ position: 'absolute', right: '-10px', top: '-10px', width: '70px', height: '70px', borderRadius: '50%', background: `${accent}18` }} />
@@ -107,9 +140,12 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
               </div>
             </div>
             <div style={{ marginTop: '14px', height: '4px', borderRadius: '99px', background: `${accent}20` }}>
-              <motion.div initial={{ width: 0 }} animate={{ width: `${stats.total ? (value / stats.total) * 100 : 0}%` }}
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${stats.total ? (value / stats.total) * 100 : 0}%` }}
                 transition={{ delay: i * 0.07 + 0.2, duration: 0.7 }}
-                style={{ height: '100%', borderRadius: '99px', background: accent }} />
+                style={{ height: '100%', borderRadius: '99px', background: accent }}
+              />
             </div>
             <p style={{ fontSize: '11px', color: accent, marginTop: '6px', fontWeight: 500 }}>
               {stats.total ? Math.round((value / stats.total) * 100) : 0}% of total
@@ -118,10 +154,13 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
         ))}
       </div>
 
-      {/* Bottom row */}
+      {/* Charts row */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+
         {/* By College */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="section-card" style={{ padding: '20px' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+          className="section-card" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <BarChart3 size={15} color="#C9A84C" />
             <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0B1B3D', fontFamily: 'Syne, sans-serif' }}>MOAs by College</h3>
@@ -149,8 +188,10 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
           }
         </motion.div>
 
-        {/* By Industry + alerts */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="section-card" style={{ padding: '20px' }}>
+        {/* By Industry */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
+          className="section-card" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <BarChart3 size={15} color="#C9A84C" />
             <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0B1B3D', fontFamily: 'Syne, sans-serif' }}>By Industry</h3>
@@ -171,7 +212,9 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
                 ))}
               </div>
           }
-          {stats.expiring > 0 && (
+
+          {/* Expiring alert — only show for non-students */}
+          {userRole !== 'student' && stats.expiring > 0 && (
             <div style={{ marginTop: '16px', padding: '10px 12px', borderRadius: '10px', background: '#FFF7ED', border: '1px solid #FED7AA', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <AlertTriangle size={14} color="#F97316" style={{ flexShrink: 0 }} />
               <p style={{ fontSize: '12px', color: '#C2410C' }}>

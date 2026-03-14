@@ -1,8 +1,8 @@
 // src/services/moaService.ts
 import {
   collection, doc, addDoc, updateDoc, getDocs,
-  query, where, orderBy, serverTimestamp, Timestamp,
-  getDoc, writeBatch,
+  query, orderBy, serverTimestamp, Timestamp,
+  getDoc,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { MOA, AppUser, AuditEntry, UserRole } from '../types/Index';
@@ -33,24 +33,31 @@ const serializeMOA = (data: Record<string, unknown>): MOA => ({
   updatedAt: toDate(data.updatedAt),
   auditTrail: ((data.auditTrail as unknown[]) || []).map((a) => {
     const ae = a as Record<string, unknown>;
-    return {
-      ...ae,
-      timestamp: toDate(ae.timestamp),
-    } as AuditEntry;
+    return { ...ae, timestamp: toDate(ae.timestamp) } as AuditEntry;
   }),
 });
 
 // --- MOA CRUD ---
 export const getMOAs = async (role: UserRole): Promise<MOA[]> => {
-  const ref = collection(db, 'moas');
-  let q;
-  if (role === 'admin') {
-    q = query(ref, orderBy('createdAt', 'desc'));
-  } else {
-    q = query(ref, where('isDeleted', '==', false), orderBy('createdAt', 'desc'));
+  try {
+    // Single simple query with no compound filter — avoids composite index requirement
+    // Filtering by isDeleted and status is done client-side
+    const q = query(collection(db, 'moas'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    const all = snap.docs.map((d) => serializeMOA({ id: d.id, ...d.data() }));
+
+    if (role === 'admin') {
+      // Admin sees ALL rows including deleted
+      return all;
+    }
+
+    // Faculty and student only see non-deleted rows
+    // Student further filtering (APPROVED only) is handled in the UI layer
+    return all.filter(m => !m.isDeleted);
+  } catch (err) {
+    console.error('getMOAs failed:', err);
+    return [];
   }
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => serializeMOA({ id: d.id, ...d.data() }));
 };
 
 export const addMOA = async (
@@ -170,10 +177,4 @@ export const toggleUserBlock = async (uid: string, isBlocked: boolean): Promise<
 
 export const toggleFacultyMaintain = async (uid: string, canMaintain: boolean): Promise<void> => {
   await updateDoc(doc(db, 'users', uid), { canMaintainMOA: canMaintain });
-};
-
-export const batchSeedData = async (): Promise<void> => {
-  // Use for initial demo data seeding
-  const batch = writeBatch(db);
-  console.log('Seed function ready. Add seed data here.', batch);
 };
