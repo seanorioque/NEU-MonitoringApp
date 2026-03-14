@@ -21,9 +21,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 
-// Restrict to NEU institutional email domain
-googleProvider.setCustomParameters({
-  hd: 'neu.edu.ph', // Change to your actual NEU domain
-});
+
+
 
 export default app;
