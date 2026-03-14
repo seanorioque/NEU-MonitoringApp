@@ -1,6 +1,5 @@
 // src/pages/LoginPage.tsx
 import React from "react";
-import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { Shield, BookOpen, Building2 } from "lucide-react";
 
@@ -9,169 +8,199 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
       style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         background:
           "linear-gradient(135deg, #0B1B3D 0%, #1A3A6C 60%, #0B1B3D 100%)",
+        padding: "16px",
+        position: "relative",
       }}
     >
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full border border-yellow-400"
-            style={{
-              width: `${(i + 1) * 60}px`,
-              height: `${(i + 1) * 60}px`,
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Gold accent lines */}
+      {/* Gold top bar */}
       <div
-        className="absolute top-0 left-0 right-0 h-1"
         style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "3px",
           background:
             "linear-gradient(90deg, transparent, #C9A84C, transparent)",
         }}
       />
+      {/* Gold bottom bar */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-1"
         style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "3px",
           background:
             "linear-gradient(90deg, transparent, #C9A84C, transparent)",
         }}
       />
 
-      <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-md mx-4"
+      {/* Card */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "420px",
+          borderRadius: "24px",
+          overflow: "hidden",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.5)",
+          border: "1px solid rgba(201,168,76,0.3)",
+          background: "rgba(255,255,255,0.05)",
+          backdropFilter: "blur(20px)",
+        }}
       >
-        {/* Card */}
-        <div
-          className="rounded-3xl overflow-hidden shadow-2xl"
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            backdropFilter: "blur(20px)",
-            border: "1px solid rgba(201,168,76,0.3)",
-          }}
-        >
-          {/* Header */}
-          <div className="px-10 pt-10 pb-6 text-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="w-20 h-20 rounded-2xl mx-auto mb-5 flex items-center justify-center"
-              style={{
-                background: "linear-gradient(135deg, #C9A84C, #E8C96E)",
-              }}
-            >
-              <Building2
-                size={36}
-                className="text-neu-navy"
-                style={{ color: "#0B1B3D" }}
-              />
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-3xl font-syne font-bold text-white mb-1"
-            >
-              NEU MOA
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.35 }}
-              className="text-sm font-dm"
-              style={{ color: "#C9A84C" }}
-            >
-              Memorandum of Agreement Monitoring System
-            </motion.p>
-          </div>
-
-          {/* Divider */}
+        {/* Header */}
+        <div style={{ padding: "40px 40px 24px", textAlign: "center" }}>
+          {/* Logo icon */}
           <div
-            className="mx-10 h-px"
-            style={{ background: "rgba(201,168,76,0.3)" }}
-          />
-
-          {/* Features */}
-          <div className="px-10 py-6 space-y-3">
-            {[
-              { icon: Shield, text: "Secure institutional access only" },
-              { icon: BookOpen, text: "Real-time MOA status tracking" },
-              { icon: Building2, text: "Multi-college partnership management" },
-            ].map(({ icon: Icon, text }, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 + i * 0.1 }}
-                className="flex items-center gap-3"
-              >
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: "rgba(201,168,76,0.15)" }}
-                >
-                  <Icon size={14} style={{ color: "#C9A84C" }} />
-                </div>
-                <span
-                  className="text-sm"
-                  style={{ color: "rgba(255,255,255,0.65)" }}
-                >
-                  {text}
-                </span>
-              </motion.div>
-            ))}
+            style={{
+              width: "72px",
+              height: "72px",
+              borderRadius: "18px",
+              background: "linear-gradient(135deg, #C9A84C, #E8C96E)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 20px",
+              boxShadow: "0 8px 24px rgba(201,168,76,0.3)",
+            }}
+          >
+            <Building2 size={34} color="#0B1B3D" />
           </div>
 
-          {/* Sign in */}
-          <div className="px-10 pb-10">
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={signInWithGoogle}
-              className="w-full flex items-center justify-center gap-3 py-3.5 rounded-2xl font-medium text-sm transition-all duration-200"
-              style={{
-                background: "linear-gradient(135deg, #C9A84C 0%, #E8C96E 100%)",
-                color: "#0B1B3D",
-                fontFamily: "Syne, sans-serif",
-                fontWeight: 600,
-              }}
-            >
-              <GoogleIcon />
-              Sign in with Google
-            </motion.button>
-            <p
-              className="text-center text-xs mt-4"
-              style={{ color: "rgba(255,255,255,0.4)" }}
-            >
-              Only NEU institutional email accounts are permitted
-            </p>
-          </div>
+          <h1
+            style={{
+              fontSize: "28px",
+              fontWeight: 800,
+              color: "#ffffff",
+              margin: "0 0 6px",
+              letterSpacing: "-0.5px",
+              fontFamily: "Syne, system-ui, sans-serif",
+            }}
+          >
+            NEU MOA
+          </h1>
+          <p style={{ color: "#C9A84C", fontSize: "13px", margin: 0 }}>
+            Memorandum of Agreement Monitoring System
+          </p>
         </div>
 
-        <p
-          className="text-center text-xs mt-6"
-          style={{ color: "rgba(255,255,255,0.3)" }}
+        {/* Divider */}
+        <div
+          style={{
+            margin: "0 40px",
+            height: "1px",
+            background: "rgba(201,168,76,0.25)",
+          }}
+        />
+
+        {/* Feature list */}
+        <div
+          style={{
+            padding: "24px 40px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
         >
-          New Era University · Office of the University President
-        </p>
-      </motion.div>
+          {[
+            { Icon: Shield, text: "Secure institutional access only" },
+            { Icon: BookOpen, text: "Real-time MOA status tracking" },
+            { Icon: Building2, text: "Multi-college partnership management" },
+          ].map(({ Icon, text }, i) => (
+            <div
+              key={i}
+              style={{ display: "flex", alignItems: "center", gap: "12px" }}
+            >
+              <div
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "8px",
+                  flexShrink: 0,
+                  background: "rgba(201,168,76,0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon size={14} color="#C9A84C" />
+              </div>
+              <span
+                style={{ color: "rgba(255,255,255,0.65)", fontSize: "13px" }}
+              >
+                {text}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Sign in button */}
+        <div style={{ padding: "0 40px 40px" }}>
+          <button
+            onClick={signInWithGoogle}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+              padding: "14px",
+              borderRadius: "14px",
+              border: "none",
+              background: "linear-gradient(135deg, #C9A84C 0%, #E8C96E 100%)",
+              color: "#0B1B3D",
+              fontSize: "14px",
+              fontWeight: 700,
+              cursor: "pointer",
+              boxShadow: "0 4px 16px rgba(201,168,76,0.35)",
+              transition: "all 0.2s",
+              fontFamily: "Syne, system-ui, sans-serif",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.filter = "brightness(1.08)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.filter = "brightness(1)")
+            }
+          >
+            <GoogleIcon />
+            Sign in with Google
+          </button>
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: "11px",
+              marginTop: "12px",
+              color: "rgba(255,255,255,0.35)",
+            }}
+          >
+            Only NEU institutional email accounts are permitted
+          </p>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <p
+        style={{
+          position: "absolute",
+          bottom: "16px",
+          color: "rgba(255,255,255,0.25)",
+          fontSize: "11px",
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        New Era University · Office of the University President
+      </p>
     </div>
   );
 };
