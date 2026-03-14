@@ -27,21 +27,31 @@ export const useAuth = () => {
   return ctx;
 };
 
-// ─── DEV TESTING OVERRIDE ────────────────────────────────────────────────────
-// Change this to switch roles instantly without needing multiple accounts.
-// Options: 'admin' | 'faculty' | 'student' | null (null = use Firestore role)
-const DEV_ROLE: UserRole | null = 'admin';
+// ─── UID → ROLE MAP ──────────────────────────────────────────────────────────
+// Add each Google account's UID and the role you want to assign.
+// To find a UID: sign in → open Firebase Console → Authentication → Users
+//
+// Format:  'UID_HERE': 'admin' | 'faculty' | 'student'
+//
+const UID_ROLES: Record<string, UserRole> = {
+  'REPLACE_WITH_UID_1': 'admin',
+  'REPLACE_WITH_UID_2': 'faculty',
+  'REPLACE_WITH_UID_3': 'student',
+  // add more as needed...
+};
 // ─────────────────────────────────────────────────────────────────────────────
 
-const getRoleFromEmail = (email: string): UserRole => {
-  if (DEV_ROLE) return DEV_ROLE;
-  if (email.endsWith('@admin.neu.edu.ph')) return 'admin';
-  if (email.endsWith('@faculty.neu.edu.ph')) return 'faculty';
-  return 'student';
-};
+// Fallback role if a UID is not in the map above
+const DEFAULT_ROLE: UserRole = 'student';
 
 // Allow all emails during testing — restrict in production
-const isNEUEmail = (_email: string): boolean => true;
+const isAllowedEmail = (_email: string): boolean => true;
+// Production example:
+// const isAllowedEmail = (email: string) => email.endsWith('@neu.edu.ph');
+
+const getRoleForUser = (uid: string): UserRole => {
+  return UID_ROLES[uid] ?? DEFAULT_ROLE;
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
@@ -58,6 +68,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const userRef = doc(db, 'users', fbUser.uid);
             const snap = await getDoc(userRef);
 
+            // Look up role from UID map
+            const assignedRole = getRoleForUser(fbUser.uid);
+
             if (snap.exists()) {
               const data = snap.data() as AppUser;
 
@@ -70,29 +83,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 return;
               }
 
-              // DEV: force override role even for existing Firestore users
-              const resolvedRole: UserRole = DEV_ROLE ?? data.role;
-
+              // Update lastLogin and sync role from UID map
               await updateDoc(userRef, {
                 lastLogin: serverTimestamp(),
-                // DEV: also persist the forced role so UI reflects it
-                ...(DEV_ROLE ? { role: DEV_ROLE } : {}),
+                role: assignedRole,
               });
 
               setCurrentUser({
                 ...data,
                 uid: fbUser.uid,
-                role: resolvedRole,
+                role: assignedRole,
               });
 
             } else {
-              // New user — create Firestore profile
-              const role = getRoleFromEmail(fbUser.email || '');
+              // First time signing in — create Firestore profile
               const newUser: Omit<AppUser, 'uid'> = {
                 email: fbUser.email || '',
                 displayName: fbUser.displayName || fbUser.email || 'User',
                 photoURL: fbUser.photoURL || '',
-                role,
+                role: assignedRole,
                 isBlocked: false,
                 createdAt: new Date(),
                 lastLogin: new Date(),
@@ -104,13 +113,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           } catch (err) {
             console.error('Firestore error:', err);
-            // Fallback so app does not get stuck on loading
+            // Fallback — don't leave user stuck on loading screen
             setCurrentUser({
               uid: fbUser.uid,
               email: fbUser.email || '',
               displayName: fbUser.displayName || 'User',
               photoURL: fbUser.photoURL || '',
-              role: DEV_ROLE ?? 'student',
+              role: getRoleForUser(fbUser.uid),
               isBlocked: false,
               createdAt: new Date(),
               lastLogin: new Date(),
@@ -134,9 +143,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const email = result.user.email || '';
-      if (!isNEUEmail(email)) {
+      if (!isAllowedEmail(email)) {
         await firebaseSignOut(auth);
-        toast.error('Only NEU institutional email accounts are allowed.');
+        toast.error('Only authorized email accounts are allowed.');
       }
     } catch (err: unknown) {
       const error = err as { code?: string };
