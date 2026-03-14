@@ -5,7 +5,7 @@ import {
   getDoc, writeBatch,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { MOA, AppUser, AuditEntry, UserRole } from '../types';
+import type { MOA, AppUser, AuditEntry, UserRole } from '../types/Index';
 
 // --- Helpers ---
 const toDate = (v: unknown): Date => {

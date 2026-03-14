@@ -5,11 +5,11 @@ import { useAuth } from './contexts/AuthContext';
 import { LoginPage } from './pages/LoginPage';
 import { Sidebar } from './components/Sidebar';
 import { DashboardPage } from './pages/DashboardPage';
-import { MOAListPage } from './pages/MOAListPage';
+import { MOAListPage } from '../src/pages/MoaListPage'
 import { UserManagementPage } from './pages/UserManagementPage';
 import { AuditPage } from './pages/AuditPage';
 import { getMOAs } from './services/moaService';
-import type { MOA } from './types/index';
+import type { MOA } from '../src/types/Index';
 import { RefreshCw } from 'lucide-react';
 
 const LoadingScreen = () => (

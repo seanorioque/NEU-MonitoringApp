@@ -4,11 +4,11 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  User as FirebaseUser,
+  type User as FirebaseUser,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../lib/firebase';
-import { AppUser, UserRole } from '../types';
+import type { AppUser, UserRole } from '../types/Index';
 import toast from 'react-hot-toast';
 
 interface AuthContextType {

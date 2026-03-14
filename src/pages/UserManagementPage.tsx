@@ -1,8 +1,8 @@
 // src/pages/UserManagementPage.tsx
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Shield, ShieldOff, CheckSquare, Square, Search, UserCheck, UserX } from 'lucide-react';
-import { AppUser, UserRole } from '../types';
+import { CheckSquare, Square, Search, UserCheck, UserX } from 'lucide-react';
+import type { AppUser, UserRole } from '../types/Index';
 import { getUsers, toggleUserBlock, toggleFacultyMaintain, updateUserRole } from '../services/moaService';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';

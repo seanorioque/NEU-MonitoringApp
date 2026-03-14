@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save } from 'lucide-react';
-import { type MOA, ALL_STATUSES, INDUSTRY_TYPES, COLLEGES } from '../types/index'
+import { type MOA, ALL_STATUSES, INDUSTRY_TYPES, COLLEGES } from '../types/Index'
 
 interface Props {
   moa?: MOA | null;

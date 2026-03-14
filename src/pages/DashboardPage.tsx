@@ -1,7 +1,7 @@
 // src/pages/DashboardPage.tsx
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { MOA, College, COLLEGES, getStatusGroup } from '../types';
+import { type MOA, type College, COLLEGES, getStatusGroup } from '../types/Index';
 import { CheckCircle2, Clock, AlertTriangle, XCircle, TrendingUp, Filter } from 'lucide-react';
 
 interface Props {

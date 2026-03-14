@@ -5,7 +5,7 @@ import {
   Search, Plus, Edit2, Trash2, RefreshCw, History,
   ChevronUp, ChevronDown, Filter, X
 } from 'lucide-react';
-import { type MOA, type AppUser, COLLEGES, INDUSTRY_TYPES, ALL_STATUSES, getStatusGroup } from '../types/index';
+import { type MOA, type AppUser, COLLEGES, INDUSTRY_TYPES, ALL_STATUSES, getStatusGroup } from '../types/Index';
 import { StatusBadge } from '../components/StatusBadge';
 import { MOAFormModal } from '../components/MOAFormModal';
 import { AuditTrailModal } from '../components/AuditTrailModal';

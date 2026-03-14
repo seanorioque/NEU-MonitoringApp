@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import {
   LayoutDashboard, FileText, Users, LogOut,
-  Building2, ShieldCheck, History, Search
+  Building2, ShieldCheck, History, 
 } from 'lucide-react';
 
 interface SidebarProps {
