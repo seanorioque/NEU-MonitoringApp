@@ -27,24 +27,19 @@ export const useAuth = () => {
   return ctx;
 };
 
-// Determine role from email domain/pattern — adjust to your institution's logic
 const getRoleFromEmail = (email: string): UserRole => {
-  // Admins: specific admin emails or pattern
   if (email.includes('admin') || email.endsWith('@admin.neu.edu.ph')) return 'admin';
-  // Faculty: faculty pattern
   if (email.includes('faculty') || email.endsWith('@faculty.neu.edu.ph')) return 'faculty';
-  // Default: student
   return 'student';
 };
 
-// NEU domain check — adjust to your actual domain
 const isNEUEmail = (email: string): boolean => {
-  // Accept any neu.edu.ph domain for demo; tighten as needed
-  return email.endsWith('@neu.edu.ph') ||
+  return (
+    email.endsWith('@neu.edu.ph') ||
     email.endsWith('@faculty.neu.edu.ph') ||
     email.endsWith('@admin.neu.edu.ph') ||
-    // For development/demo: allow gmail too (remove in production)
-    email.endsWith('@gmail.com');
+    email.endsWith('@gmail.com') // remove in production
+  );
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -53,49 +48,66 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (fbUser) => {
-      if (fbUser) {
-        setFirebaseUser(fbUser);
-        try {
-          const userRef = doc(db, 'users', fbUser.uid);
-          const snap = await getDoc(userRef);
-          if (snap.exists()) {
-            const data = snap.data() as AppUser;
-            if (data.isBlocked) {
-              toast.error('Your account has been blocked. Contact the administrator.');
-              await firebaseSignOut(auth);
-              setCurrentUser(null);
-              setFirebaseUser(null);
+    let unsub: (() => void) | undefined;
+    try {
+      unsub = onAuthStateChanged(auth, async (fbUser) => {
+        if (fbUser) {
+          setFirebaseUser(fbUser);
+          try {
+            const userRef = doc(db, 'users', fbUser.uid);
+            const snap = await getDoc(userRef);
+            if (snap.exists()) {
+              const data = snap.data() as AppUser;
+              if (data.isBlocked) {
+                toast.error('Your account has been blocked. Contact the administrator.');
+                await firebaseSignOut(auth);
+                setCurrentUser(null);
+                setFirebaseUser(null);
+              } else {
+                await updateDoc(userRef, { lastLogin: serverTimestamp() });
+                setCurrentUser({ ...data, uid: fbUser.uid });
+              }
             } else {
-              await updateDoc(userRef, { lastLogin: serverTimestamp() });
-              setCurrentUser({ ...data, uid: fbUser.uid });
+              const role = getRoleFromEmail(fbUser.email || '');
+              const newUser: Omit<AppUser, 'uid'> = {
+                email: fbUser.email || '',
+                displayName: fbUser.displayName || fbUser.email || 'User',
+                photoURL: fbUser.photoURL || '',
+                role,
+                isBlocked: false,
+                createdAt: new Date(),
+                lastLogin: new Date(),
+                canMaintainMOA: false,
+              };
+              await setDoc(userRef, newUser);
+              setCurrentUser({ ...newUser, uid: fbUser.uid });
             }
-          } else {
-            // New user — create profile
-            const role = getRoleFromEmail(fbUser.email || '');
-            const newUser: Omit<AppUser, 'uid'> = {
+          } catch (err) {
+            console.error('Firestore error — check Firebase config and Firestore is enabled:', err);
+            // Fallback: still let the user in with basic profile
+            setCurrentUser({
+              uid: fbUser.uid,
               email: fbUser.email || '',
-              displayName: fbUser.displayName || '',
+              displayName: fbUser.displayName || 'User',
               photoURL: fbUser.photoURL || '',
-              role,
+              role: 'student',
               isBlocked: false,
               createdAt: new Date(),
               lastLogin: new Date(),
               canMaintainMOA: false,
-            };
-            await setDoc(userRef, newUser);
-            setCurrentUser({ ...newUser, uid: fbUser.uid });
+            });
           }
-        } catch (err) {
-          console.error('Error fetching user:', err);
+        } else {
+          setFirebaseUser(null);
+          setCurrentUser(null);
         }
-      } else {
-        setFirebaseUser(null);
-        setCurrentUser(null);
-      }
+        setLoading(false);
+      });
+    } catch (err) {
+      console.error('Firebase Auth init failed — check src/lib/firebase.ts config:', err);
       setLoading(false);
-    });
-    return unsub;
+    }
+    return () => { if (unsub) unsub(); };
   }, []);
 
   const signInWithGoogle = async () => {
@@ -107,9 +119,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toast.error('Only NEU institutional email accounts are allowed.');
       }
     } catch (err: unknown) {
-      if (err instanceof Error && err.message.includes('popup-closed')) return;
+      const error = err as { code?: string };
+      if (error.code === 'auth/popup-closed-by-user') return;
+      if (error.code === 'auth/cancelled-popup-request') return;
+      console.error('Sign-in error:', err);
       toast.error('Sign-in failed. Please try again.');
-      console.error(err);
     }
   };
 
