@@ -1,73 +1,172 @@
-# React + TypeScript + Vite
+# NEU MOA Monitoring System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack web application for monitoring Memoranda of Agreement (MOAs) at **New Era University**. Built with React, TypeScript, TailwindCSS, Firebase, and Framer Motion.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📁 Project Structure
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+neu-moa-app/
+├── src/
+│   ├── contexts/
+│   │   └── AuthContext.tsx       # Firebase Auth + user role management
+│   ├── lib/
+│   │   └── firebase.ts           # Firebase initialization ⚠️ Configure here
+│   ├── pages/
+│   │   ├── LoginPage.tsx         # Google Sign-In page
+│   │   ├── DashboardPage.tsx     # Stats dashboard with filters
+│   │   ├── MOAListPage.tsx       # MOA table (role-aware)
+│   │   ├── UserManagementPage.tsx# Admin: manage users & roles
+│   │   └── AuditPage.tsx         # Admin: full audit trail log
+│   ├── components/
+│   │   ├── Sidebar.tsx           # Navigation sidebar
+│   │   ├── StatusBadge.tsx       # MOA status indicator
+│   │   ├── MOAFormModal.tsx      # Add/Edit MOA form
+│   │   └── AuditTrailModal.tsx   # Per-MOA audit history
+│   ├── services/
+│   │   └── moaService.ts         # Firestore CRUD operations
+│   ├── types/
+│   │   └── index.ts              # TypeScript types & constants
+│   ├── App.tsx                   # Root app with shell layout
+│   ├── main.tsx                  # Entry point
+│   └── index.css                 # Global styles (Tailwind + custom)
+├── firestore.rules               # Firestore security rules
+├── firestore.indexes.json        # Composite index definitions
+├── firebase.json                 # Firebase CLI config
+├── package.json
+├── vite.config.ts
+├── tailwind.config.js
+└── tsconfig.json
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Setup Instructions
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Install Dependencies
+
+```bash
+npm install
 ```
+
+### 2. Configure Firebase
+
+1. Go to [Firebase Console](https://console.firebase.google.com)
+2. Create a new project (or use existing)
+3. Enable **Authentication** → Sign-in methods → **Google**
+4. Enable **Firestore Database** (start in production mode)
+5. Go to **Project Settings** → Your Apps → Add Web App
+6. Copy the config and paste into `src/lib/firebase.ts`:
+
+```ts
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+```
+
+7. **Update the NEU domain** in `src/lib/firebase.ts`:
+```ts
+googleProvider.setCustomParameters({ hd: 'neu.edu.ph' }); // your actual domain
+```
+
+8. **Update role detection** in `src/contexts/AuthContext.tsx` to match NEU's email patterns.
+
+### 3. Deploy Firestore Rules & Indexes
+
+```bash
+npm install -g firebase-tools
+firebase login
+firebase use YOUR_PROJECT_ID
+firebase deploy --only firestore
+```
+
+### 4. Run Locally
+
+```bash
+npm run dev
+```
+
+### 5. Build for Production
+
+```bash
+npm run build
+firebase deploy --only hosting
+```
+
+---
+
+## 👥 User Roles
+
+| Feature | Student | Faculty | Admin |
+|---|---|---|---|
+| View APPROVED MOAs | ✅ | ✅ | ✅ |
+| View PROCESSING/EXPIRED MOAs | ❌ | ✅ | ✅ |
+| See HTE ID, dates, industry, college | ❌ | ✅ | ✅ |
+| See audit trail columns | ❌ | ❌ | ✅ |
+| See deleted rows | ❌ | ❌ | ✅ |
+| Add/Edit/Delete MOAs | ❌ | If granted | ✅ |
+| Restore deleted MOAs | ❌ | ❌ | ✅ |
+| Manage users & roles | ❌ | ❌ | ✅ |
+| Grant faculty MOA access | ❌ | ❌ | ✅ |
+| Block/unblock users | ❌ | ❌ | ✅ |
+| View global audit trail | ❌ | ❌ | ✅ |
+
+---
+
+## 📋 MOA Status Categories
+
+### ✅ APPROVED
+- Signed by President
+- On-going notarization
+- No notarization needed
+
+### ⏳ PROCESSING
+- Awaiting signature of the MOA draft by HTE partner
+- MOA draft sent to Legal Office for Review
+- MOA draft and opinion of legal office sent to VPAA/OP for approval
+
+### ⚠️ EXPIRING
+- Two months before expiration
+
+### ❌ EXPIRED
+- No renewal done
+
+---
+
+## 🔒 Security Notes
+
+- **No hard deletes**: All deletions are soft (isDeleted flag). Only admins can restore.
+- **Firestore rules** enforce role-based access at the database level.
+- **Domain restriction**: Only NEU institutional emails can sign in.
+- **Blocked users**: Immediately signed out on next auth state check.
+- **Audit trail**: All INSERT, UPDATE, DELETE, RESTORE operations are logged with user info, timestamp, and field-level changes.
+
+---
+
+## 🎨 Tech Stack
+
+- **React 18** + **TypeScript**
+- **TailwindCSS** — utility-first styling
+- **Framer Motion** — animations & transitions
+- **Firebase v10** — Auth, Firestore
+- **react-hot-toast** — notifications
+- **Vite** — build tool
+- **lucide-react** — icons
+
+---
+
+## 📝 Customization Checklist
+
+- [ ] Replace Firebase config in `src/lib/firebase.ts`
+- [ ] Set correct NEU email domain (`hd` param and `isNEUEmail()`)
+- [ ] Update role detection logic in `AuthContext.tsx` for your email patterns
+- [ ] Add real COLLEGES list matching NEU's actual colleges
+- [ ] Deploy Firestore security rules
+- [ ] Create initial admin user manually in Firestore (set `role: 'admin'`)
+- [ ] Add Firestore indexes for better query performance
