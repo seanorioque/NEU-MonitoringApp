@@ -1,11 +1,18 @@
 // src/services/moaService.ts
 import {
-  collection, doc, addDoc, updateDoc, getDocs,
-  query, orderBy, serverTimestamp, Timestamp,
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp,
+  Timestamp,
   getDoc,
-} from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import type { MOA, AppUser, AuditEntry, UserRole } from '../types/Index';
+} from "firebase/firestore";
+import { db } from "../lib/firebase";
+import type { MOA, AppUser, AuditEntry, UserRole } from "../types/Index";
 
 // --- Helpers ---
 const toDate = (v: unknown): Date => {
@@ -21,11 +28,11 @@ const serializeMOA = (data: Record<string, unknown>): MOA => ({
   address: data.address as string,
   contactPerson: data.contactPerson as string,
   contactEmail: data.contactEmail as string,
-  industryType: data.industryType as MOA['industryType'],
+  industryType: data.industryType as MOA["industryType"],
   effectiveDate: toDate(data.effectiveDate),
   expirationDate: toDate(data.expirationDate),
-  status: data.status as MOA['status'],
-  endorsedByCollege: data.endorsedByCollege as MOA['endorsedByCollege'],
+  status: data.status as MOA["status"],
+  endorsedByCollege: data.endorsedByCollege as MOA["endorsedByCollege"],
   isDeleted: Boolean(data.isDeleted),
   deletedAt: data.deletedAt ? toDate(data.deletedAt) : undefined,
   deletedBy: data.deletedBy as string | undefined,
@@ -42,36 +49,39 @@ export const getMOAs = async (role: UserRole): Promise<MOA[]> => {
   try {
     // Single simple query with no compound filter — avoids composite index requirement
     // Filtering by isDeleted and status is done client-side
-    const q = query(collection(db, 'moas'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, "moas"), orderBy("createdAt", "desc"));
     const snap = await getDocs(q);
     const all = snap.docs.map((d) => serializeMOA({ id: d.id, ...d.data() }));
 
-    if (role === 'admin') {
+    if (role === "admin") {
       // Admin sees ALL rows including deleted
       return all;
     }
 
     // Faculty and student only see non-deleted rows
     // Student further filtering (APPROVED only) is handled in the UI layer
-    return all.filter(m => !m.isDeleted);
+    return all.filter((m) => !m.isDeleted);
   } catch (err) {
-    console.error('getMOAs failed:', err);
+    console.error("getMOAs failed:", err);
     return [];
   }
 };
 
 export const addMOA = async (
-  data: Omit<MOA, 'id' | 'createdAt' | 'updatedAt' | 'auditTrail' | 'isDeleted'>,
-  actor: AppUser
+  data: Omit<
+    MOA,
+    "id" | "createdAt" | "updatedAt" | "auditTrail" | "isDeleted"
+  >,
+  actor: AppUser,
 ): Promise<string> => {
   const audit: AuditEntry = {
     userId: actor.uid,
     userName: actor.displayName,
     userEmail: actor.email,
-    operation: 'INSERT',
+    operation: "INSERT",
     timestamp: new Date(),
   };
-  const ref = await addDoc(collection(db, 'moas'), {
+  const ref = await addDoc(collection(db, "moas"), {
     ...data,
     effectiveDate: Timestamp.fromDate(data.effectiveDate),
     expirationDate: Timestamp.fromDate(data.expirationDate),
@@ -85,9 +95,9 @@ export const addMOA = async (
 
 export const updateMOA = async (
   id: string,
-  updates: Partial<Omit<MOA, 'id' | 'auditTrail' | 'createdAt'>>,
+  updates: Partial<Omit<MOA, "id" | "auditTrail" | "createdAt">>,
   actor: AppUser,
-  prevData: MOA
+  prevData: MOA,
 ): Promise<void> => {
   const changes: Record<string, { before: unknown; after: unknown }> = {};
   (Object.keys(updates) as (keyof typeof updates)[]).forEach((key) => {
@@ -99,32 +109,43 @@ export const updateMOA = async (
     userId: actor.uid,
     userName: actor.displayName,
     userEmail: actor.email,
-    operation: 'UPDATE',
+    operation: "UPDATE",
     timestamp: new Date(),
     changes,
   };
-  const payload: Record<string, unknown> = { ...updates, updatedAt: serverTimestamp() };
-  if (updates.effectiveDate) payload.effectiveDate = Timestamp.fromDate(updates.effectiveDate);
-  if (updates.expirationDate) payload.expirationDate = Timestamp.fromDate(updates.expirationDate);
+  const payload: Record<string, unknown> = {
+    ...updates,
+    updatedAt: serverTimestamp(),
+  };
+  if (updates.effectiveDate)
+    payload.effectiveDate = Timestamp.fromDate(updates.effectiveDate);
+  if (updates.expirationDate)
+    payload.expirationDate = Timestamp.fromDate(updates.expirationDate);
 
-  const ref = doc(db, 'moas', id);
+  const ref = doc(db, "moas", id);
   const snap = await getDoc(ref);
   const existing = snap.data()?.auditTrail || [];
   await updateDoc(ref, {
     ...payload,
-    auditTrail: [...existing, { ...audit, timestamp: Timestamp.fromDate(audit.timestamp) }],
+    auditTrail: [
+      ...existing,
+      { ...audit, timestamp: Timestamp.fromDate(audit.timestamp) },
+    ],
   });
 };
 
-export const softDeleteMOA = async (id: string, actor: AppUser): Promise<void> => {
+export const softDeleteMOA = async (
+  id: string,
+  actor: AppUser,
+): Promise<void> => {
   const audit: AuditEntry = {
     userId: actor.uid,
     userName: actor.displayName,
     userEmail: actor.email,
-    operation: 'DELETE',
+    operation: "DELETE",
     timestamp: new Date(),
   };
-  const ref = doc(db, 'moas', id);
+  const ref = doc(db, "moas", id);
   const snap = await getDoc(ref);
   const existing = snap.data()?.auditTrail || [];
   await updateDoc(ref, {
@@ -132,7 +153,10 @@ export const softDeleteMOA = async (id: string, actor: AppUser): Promise<void> =
     deletedAt: serverTimestamp(),
     deletedBy: actor.uid,
     updatedAt: serverTimestamp(),
-    auditTrail: [...existing, { ...audit, timestamp: Timestamp.fromDate(audit.timestamp) }],
+    auditTrail: [
+      ...existing,
+      { ...audit, timestamp: Timestamp.fromDate(audit.timestamp) },
+    ],
   });
 };
 
@@ -141,10 +165,10 @@ export const restoreMOA = async (id: string, actor: AppUser): Promise<void> => {
     userId: actor.uid,
     userName: actor.displayName,
     userEmail: actor.email,
-    operation: 'RESTORE',
+    operation: "RESTORE",
     timestamp: new Date(),
   };
-  const ref = doc(db, 'moas', id);
+  const ref = doc(db, "moas", id);
   const snap = await getDoc(ref);
   const existing = snap.data()?.auditTrail || [];
   await updateDoc(ref, {
@@ -152,29 +176,41 @@ export const restoreMOA = async (id: string, actor: AppUser): Promise<void> => {
     deletedAt: null,
     deletedBy: null,
     updatedAt: serverTimestamp(),
-    auditTrail: [...existing, { ...audit, timestamp: Timestamp.fromDate(audit.timestamp) }],
+    auditTrail: [
+      ...existing,
+      { ...audit, timestamp: Timestamp.fromDate(audit.timestamp) },
+    ],
   });
 };
 
 // --- User Management ---
 export const getUsers = async (): Promise<AppUser[]> => {
-  const snap = await getDocs(collection(db, 'users'));
+  const snap = await getDocs(collection(db, "users"));
   return snap.docs.map((d) => ({
-    ...(d.data() as Omit<AppUser, 'uid'>),
+    ...(d.data() as Omit<AppUser, "uid">),
     uid: d.id,
     createdAt: toDate(d.data().createdAt),
     lastLogin: toDate(d.data().lastLogin),
   }));
 };
 
-export const updateUserRole = async (uid: string, role: UserRole): Promise<void> => {
-  await updateDoc(doc(db, 'users', uid), { role });
+export const updateUserRole = async (
+  uid: string,
+  role: UserRole,
+): Promise<void> => {
+  await updateDoc(doc(db, "users", uid), { role });
 };
 
-export const toggleUserBlock = async (uid: string, isBlocked: boolean): Promise<void> => {
-  await updateDoc(doc(db, 'users', uid), { isBlocked });
+export const toggleUserBlock = async (
+  uid: string,
+  isBlocked: boolean,
+): Promise<void> => {
+  await updateDoc(doc(db, "users", uid), { isBlocked });
 };
 
-export const toggleFacultyMaintain = async (uid: string, canMaintain: boolean): Promise<void> => {
-  await updateDoc(doc(db, 'users', uid), { canMaintainMOA: canMaintain });
+export const toggleFacultyMaintain = async (
+  uid: string,
+  canMaintain: boolean,
+): Promise<void> => {
+  await updateDoc(doc(db, "users", uid), { canMaintainMOA: canMaintain });
 };
