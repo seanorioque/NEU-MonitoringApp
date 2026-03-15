@@ -81,13 +81,7 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
         </div>
       </div>
 
-      {/* Role badge */}
-      {userRole === 'student' && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '10px', background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-          <CheckCircle2 size={14} color="#16A34A" />
-          
-        </div>
-      )}
+      
 
       {/* Filters */}
       <div className="section-card" style={{ padding: '14px 16px' }}>
