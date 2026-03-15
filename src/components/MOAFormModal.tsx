@@ -14,7 +14,9 @@ import {
   GraduationCap,
   Hash,
 } from "lucide-react";
-import { type MOA, ALL_STATUSES, INDUSTRY_TYPES, COLLEGES } from "../types/MOA";
+import { type MOA, ALL_STATUSES } from "../types/MOA";
+import { INDUSTRY_TYPES } from "../types/IndustryTypes";
+import { COLLEGES } from "../types/Colleges";
 
 interface Props {
   moa?: MOA | null;

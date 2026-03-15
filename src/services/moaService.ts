@@ -12,7 +12,10 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import type { MOA, AppUser, AuditEntry, UserRole } from "../types/MOA";
+import type { MOA } from "../types/MOA";
+import type { AuditEntry } from "../types/AuditEntry";
+import type { UserRole } from "../types/UserRole";
+import type { AppUser } from "../types/AppUser";
 
 // --- Helpers ---
 const toDate = (v: unknown): Date => {

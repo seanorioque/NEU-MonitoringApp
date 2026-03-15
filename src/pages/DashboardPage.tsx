@@ -1,8 +1,8 @@
 // src/pages/DashboardPage.tsx
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import type { MOA, College } from "../types/MOA";
-import { COLLEGES, getStatusGroup } from "../types/MOA";
+import type { MOA } from "../types/MOA";
+import { getStatusGroup } from "../types/MOA";
 import {
   CheckCircle2,
   Clock,
@@ -13,6 +13,8 @@ import {
   BarChart3,
   X,
 } from "lucide-react";
+import type { College } from "../types/types";
+import { COLLEGES } from "../types/Colleges";
 
 interface Props {
   moas: MOA[];

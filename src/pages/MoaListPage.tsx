@@ -15,9 +15,6 @@ import {
 } from "lucide-react";
 import {
   type MOA,
-  type AppUser,
-  COLLEGES,
-  INDUSTRY_TYPES,
   ALL_STATUSES,
   getStatusGroup,
 } from "../types/MOA";
@@ -31,6 +28,9 @@ import {
   restoreMOA,
 } from "../services/moaService";
 import toast from "react-hot-toast";
+import type { AppUser } from "../types/AppUser";
+import { COLLEGES } from "../types/Colleges";
+import { INDUSTRY_TYPES } from "../types/IndustryTypes";
 
 interface Props {
   moas: MOA[];

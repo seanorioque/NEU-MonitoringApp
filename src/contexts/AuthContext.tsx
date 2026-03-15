@@ -16,8 +16,10 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "../lib/firebase";
-import type { AppUser, UserRole } from "../types/MOA";
+
 import toast from "react-hot-toast";
+import type { AppUser } from "../types/AppUser";
+import type { UserRole } from "../types/UserRole";
 
 interface AuthContextType {
   currentUser: AppUser | null;

@@ -10,7 +10,8 @@ import {
   Search,
   Filter,
 } from "lucide-react";
-import type { MOA, AuditEntry } from "../types/MOA";
+import type { MOA } from "../types/MOA";
+import type { AuditEntry } from "../types/AuditEntry";
 
 interface FlatAudit extends AuditEntry {
   moaId: string;

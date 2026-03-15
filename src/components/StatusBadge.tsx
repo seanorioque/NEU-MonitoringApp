@@ -1,6 +1,7 @@
 // src/components/StatusBadge.tsx
 import React from "react";
-import { type MOAStatus, getStatusGroup, STATUS_COLORS } from "../types/MOA";
+import {  getStatusGroup, STATUS_COLORS,  } from "../types/MOA";
+import type { MOAStatus } from "../types/types";
 
 export const StatusBadge: React.FC<{ status: MOAStatus; small?: boolean }> = ({
   status,

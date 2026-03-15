@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckSquare, Square, Search, UserCheck, UserX } from "lucide-react";
-import type { AppUser, UserRole } from "../types/MOA";
 import {
   getUsers,
   toggleUserBlock,
@@ -11,6 +10,8 @@ import {
 } from "../services/moaService";
 import toast from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext";
+import type { AppUser } from "../types/AppUser";
+import type { UserRole } from "../types/UserRole";
 
 export const UserManagementPage: React.FC = () => {
   const { currentUser } = useAuth();
