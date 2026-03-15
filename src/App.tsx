@@ -9,7 +9,7 @@ import { MOAListPage } from "./pages/MoaListPage";
 import { UserManagementPage } from "./pages/UserManagementPage";
 import { AuditPage } from "./pages/AuditPage";
 import { getMOAs } from "./services/moaService";
-import type { MOA } from "./types/Index";
+import type { MOA } from "./types/index";
 import { RefreshCw, Bell } from "lucide-react";
 
 const LoadingScreen = () => (
