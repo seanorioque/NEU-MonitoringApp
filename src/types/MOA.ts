@@ -1,5 +1,4 @@
 import type {  MOAStatus,IndustryType,College} from "./types";
-import type { UserRole } from "./UserRole";
 import type { AuditEntry } from "./AuditEntry";
 
 export interface MOA {
