@@ -85,9 +85,7 @@ export const DashboardPage: React.FC<Props> = ({ moas, userRole }) => {
       {userRole === 'student' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '10px', background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
           <CheckCircle2 size={14} color="#16A34A" />
-          <span style={{ fontSize: '12px', color: '#15803D', fontWeight: 500 }}>
-            Showing approved MOAs only — contact admin for full access
-          </span>
+          
         </div>
       )}
 
