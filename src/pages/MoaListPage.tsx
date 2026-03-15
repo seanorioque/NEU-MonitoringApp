@@ -524,7 +524,7 @@ export const MOAListPage: React.FC<Props> = ({
                     <td
                       style={{
                         fontFamily: "monospace",
-                        fontSize: "11px",
+                        fontSize: "10px",
                         color: "#8B7355",
                       }}
                     >
