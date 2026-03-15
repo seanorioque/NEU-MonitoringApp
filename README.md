@@ -1,45 +1,6 @@
 # NEU MOA Monitoring System
 
 A full-stack web application for monitoring Memoranda of Agreement (MOAs) at **New Era University**. Built with React, TypeScript, TailwindCSS, Firebase, and Framer Motion.
-
----
-
-## 📁 Project Structure
-
-```
-neu-moa-app/
-├── src/
-│   ├── contexts/
-│   │   └── AuthContext.tsx       # Firebase Auth + user role management
-│   ├── lib/
-│   │   └── firebase.ts           # Firebase initialization ⚠️ Configure here
-│   ├── pages/
-│   │   ├── LoginPage.tsx         # Google Sign-In page
-│   │   ├── DashboardPage.tsx     # Stats dashboard with filters
-│   │   ├── MOAListPage.tsx       # MOA table (role-aware)
-│   │   ├── UserManagementPage.tsx# Admin: manage users & roles
-│   │   └── AuditPage.tsx         # Admin: full audit trail log
-│   ├── components/
-│   │   ├── Sidebar.tsx           # Navigation sidebar
-│   │   ├── StatusBadge.tsx       # MOA status indicator
-│   │   ├── MOAFormModal.tsx      # Add/Edit MOA form
-│   │   └── AuditTrailModal.tsx   # Per-MOA audit history
-│   ├── services/
-│   │   └── moaService.ts         # Firestore CRUD operations
-│   ├── types/
-│   │   └── index.ts              # TypeScript types & constants
-│   ├── App.tsx                   # Root app with shell layout
-│   ├── main.tsx                  # Entry point
-│   └── index.css                 # Global styles (Tailwind + custom)
-├── firestore.rules               # Firestore security rules
-├── firestore.indexes.json        # Composite index definitions
-├── firebase.json                 # Firebase CLI config
-├── package.json
-├── vite.config.ts
-├── tailwind.config.js
-└── tsconfig.json
-```
-
 ---
 
 ## 🚀 Setup Instructions
@@ -164,7 +125,6 @@ firebase deploy --only hosting
 ## 📝 Customization Checklist
 
 - [ ] Replace Firebase config in `src/lib/firebase.ts`
-- [ ] Set correct NEU email domain (`hd` param and `isNEUEmail()`)
 - [ ] Update role detection logic in `AuthContext.tsx` for your email patterns
 - [ ] Add real COLLEGES list matching NEU's actual colleges
 - [ ] Deploy Firestore security rules
