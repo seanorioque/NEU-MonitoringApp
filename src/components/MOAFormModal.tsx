@@ -19,7 +19,7 @@ import {
   ALL_STATUSES,
   INDUSTRY_TYPES,
   COLLEGES,
-} from "../types/Index";
+} from "../types/index";
 
 interface Props {
   moa?: MOA | null;

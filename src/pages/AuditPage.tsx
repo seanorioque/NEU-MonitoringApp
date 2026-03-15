@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { History, Plus, Edit2, Trash2, RefreshCw, Search, Filter } from 'lucide-react';
-import type { MOA, AuditEntry } from '../types/Index';
+import type { MOA, AuditEntry } from '../types/index';
 
 interface FlatAudit extends AuditEntry { moaId: string; moaCompany: string; moaHteId: string; }
 interface Props { moas: MOA[]; }

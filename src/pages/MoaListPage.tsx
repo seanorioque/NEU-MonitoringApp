@@ -20,7 +20,7 @@ import {
   INDUSTRY_TYPES,
   ALL_STATUSES,
   getStatusGroup,
-} from "../types/Index";
+} from "../types/index";
 import { StatusBadge } from "../components/StatusBadge";
 import { MOAFormModal } from "../components/MOAFormModal";
 import { AuditTrailModal } from "../components/AuditTrailModal";
