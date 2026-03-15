@@ -36,7 +36,6 @@ export const useAuth = () => {
 const UID_ROLES: Record<string, UserRole> = {
   '2AwrmRHKM6Rqlud8pTFpQAtPteu2': 'admin',
   'VuOa7CD7obf3wu9qiSVtWM4eUVh1': 'faculty',
-  's0Ipm0PWoIRlHgMLBoG9ywXdrlJ3': 'student',
   // add more as needed...
 };
 // ─────────────────────────────────────────────────────────────────────────────
