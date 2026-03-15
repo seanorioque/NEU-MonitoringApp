@@ -16,7 +16,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "../lib/firebase";
-import type { AppUser, UserRole } from "../types/index";
+import type { AppUser, UserRole } from "../types/MOA";
 import toast from "react-hot-toast";
 
 interface AuthContextType {
@@ -36,7 +36,7 @@ export const useAuth = () => {
 };
 
 const UID_ROLES: Record<string, UserRole> = {
-  "2AwrmRHKM6Rqlud8pTFpQAtPteu2": "faculty",
+  "2AwrmRHKM6Rqlud8pTFpQAtPteu2": "admin",
   // add more as needed...
 };
 // ─────────────────────────────────────────────────────────────────────────────
@@ -45,8 +45,7 @@ const DEFAULT_ROLE: UserRole = "student";
 
 // Only @neu.edu.ph accounts are allowed
 const isNEUEmail = (email: string): boolean => {
-  return (
-    email.endsWith("@neu.edu.ph") )
+  return email.endsWith("@neu.edu.ph");
 };
 
 const getRoleForUser = (uid: string): UserRole => {
@@ -92,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           if (!isNEUEmail(email)) {
             toast.error(
               "Access denied. Only @neu.edu.ph accounts are allowed.",
-              { duration: 5000 }
+              { duration: 5000 },
             );
             await purgeNonNEUAccount(fbUser);
             setCurrentUser(null);
@@ -113,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
               if (data.isBlocked) {
                 toast.error(
-                  "Your account has been blocked. Contact the administrator."
+                  "Your account has been blocked. Contact the administrator.",
                 );
                 await firebaseSignOut(auth);
                 setCurrentUser(null);
@@ -186,7 +185,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await purgeNonNEUAccount(result.user);
         toast.error(
           "Access denied. Only @neu.edu.ph institutional accounts are allowed.",
-          { duration: 5000 }
+          { duration: 5000 },
         );
       }
     } catch (err: unknown) {

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckSquare, Square, Search, UserCheck, UserX } from "lucide-react";
-import type { AppUser, UserRole } from "../types/index";
+import type { AppUser, UserRole } from "../types/MOA";
 import {
   getUsers,
   toggleUserBlock,

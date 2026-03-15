@@ -1,8 +1,8 @@
 // src/pages/DashboardPage.tsx
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import type { MOA, College } from "../types/index";
-import { COLLEGES, getStatusGroup } from "../types/index";
+import type { MOA, College } from "../types/MOA";
+import { COLLEGES, getStatusGroup } from "../types/MOA";
 import {
   CheckCircle2,
   Clock,

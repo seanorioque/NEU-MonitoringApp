@@ -1,51 +1,6 @@
-// src/types/index.ts
-
-export type UserRole = 'student' | 'faculty' | 'admin';
-
-export type MOAStatus =
-  | 'APPROVED: Signed by President'
-  | 'APPROVED: On-going notarization'
-  | 'APPROVED: No notarization needed'
-  | 'PROCESSING: Awaiting signature of the MOA draft by HTE partner'
-  | 'PROCESSING: MOA draft sent to Legal Office for Review'
-  | 'PROCESSING: MOA draft and opinion of legal office sent to VPAA/OP for approval'
-  | 'EXPIRED: No renewal done'
-  | 'EXPIRING: Two months before expiration';
-
-export type IndustryType =
-  | 'Telecom'
-  | 'Food'
-  | 'Services'
-  | 'Technology'
-  | 'Finance'
-  | 'Healthcare'
-  | 'Education'
-  | 'Manufacturing'
-  | 'Retail'
-  | 'Construction'
-  | 'Other';
-
-export type College =
-  | 'CAS'
-  | 'CBA'
-  | 'CCS'
-  | 'CEA'
-  | 'CED'
-  | 'CCJE'
-  | 'CN'
-  | 'CAUP'
-  | 'CFAD'
-  | 'CITHM'
-  | 'Graduate School';
-
-export interface AuditEntry {
-  userId: string;
-  userName: string;
-  userEmail: string;
-  operation: 'INSERT' | 'UPDATE' | 'DELETE' | 'RESTORE';
-  timestamp: Date;
-  changes?: Record<string, { before: unknown; after: unknown }>;
-}
+import type {  MOAStatus,IndustryType,College} from "./types";
+import type { UserRole } from "./UserRole";
+import type { AuditEntry } from "./AuditEntry";
 
 export interface MOA {
   id: string;
@@ -67,17 +22,6 @@ export interface MOA {
   auditTrail: AuditEntry[];
 }
 
-export interface AppUser {
-  uid: string;
-  email: string;
-  displayName: string;
-  photoURL?: string;
-  role: UserRole;
-  isBlocked: boolean;
-  createdAt: Date;
-  lastLogin: Date;
-  canMaintainMOA: boolean; // faculty permission granted by admin
-}
 
 export type MOAStatusGroup = 'APPROVED' | 'PROCESSING' | 'EXPIRED' | 'EXPIRING';
 
@@ -126,11 +70,3 @@ export const ALL_STATUSES: MOAStatus[] = [
   'EXPIRING: Two months before expiration',
 ];
 
-export const INDUSTRY_TYPES: IndustryType[] = [
-  'Telecom', 'Food', 'Services', 'Technology', 'Finance',
-  'Healthcare', 'Education', 'Manufacturing', 'Retail', 'Construction', 'Other',
-];
-
-export const COLLEGES: College[] = [
-  'CAS', 'CBA', 'CCS', 'CEA', 'CED', 'CCJE', 'CN', 'CAUP', 'CFAD', 'CITHM', 'Graduate School',
-];
