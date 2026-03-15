@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import GoogleIcon from "../assets/GoogleIcon";
+import neuLogo from "../assets/newEraLogo.png";
 export const LoginPage: React.FC = () => {
   const { signInWithGoogle } = useAuth();
   const [hovering, setHovering] = useState(false);
@@ -211,7 +212,7 @@ export const LoginPage: React.FC = () => {
               }}
             >
               <img
-                src="/src/assets/newEraLogo.png"
+                src={neuLogo}
                 alt="New Era University"
                 style={{ width: "130%", height: "130%", objectFit: "contain" }}
               />
