@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import type { MOA } from "../types/MOA";
-import type { AuditEntry } from "../types/AuditEntry";
+import type { AuditEntry } from "../types/Audit";
 import type { UserRole } from "../types/UserRole";
 import type { AppUser } from "../types/AppUser";
 

@@ -3,7 +3,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, History, Plus, Edit2, Trash2, RefreshCw } from "lucide-react";
 import type { MOA } from "../types/MOA";
-import type { AuditEntry } from "../types/AuditEntry";
+import type { AuditEntry } from "../types/Audit";
 
 interface Props {
   moa: MOA;

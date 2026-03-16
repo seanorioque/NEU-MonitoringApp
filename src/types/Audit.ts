@@ -6,3 +6,8 @@ export interface AuditEntry {
   timestamp: Date;
   changes?: Record<string, { before: unknown; after: unknown }>;
 }
+export interface FlatAudit extends AuditEntry {
+  moaId: string;
+  moaCompany: string;
+  moaHteId: string;
+}

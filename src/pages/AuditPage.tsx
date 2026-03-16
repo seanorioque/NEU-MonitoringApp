@@ -1,38 +1,10 @@
 // src/pages/AuditPage.tsx
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  History,
-  Plus,
-  Edit2,
-  Trash2,
-  RefreshCw,
-  Search,
-  Filter,
-} from "lucide-react";
-import type { MOA } from "../types/MOA";
-import type { AuditEntry } from "../types/AuditEntry";
-
-interface FlatAudit extends AuditEntry {
-  moaId: string;
-  moaCompany: string;
-  moaHteId: string;
-}
-interface Props {
-  moas: MOA[];
-}
-
-const OP_STYLES = {
-  INSERT: { bg: "#F0FDF4", text: "#16A34A", border: "#BBF7D0", icon: Plus },
-  UPDATE: { bg: "#EFF6FF", text: "#2563EB", border: "#BFDBFE", icon: Edit2 },
-  DELETE: { bg: "#FEF2F2", text: "#DC2626", border: "#FECACA", icon: Trash2 },
-  RESTORE: {
-    bg: "#FAF5FF",
-    text: "#9333EA",
-    border: "#E9D5FF",
-    icon: RefreshCw,
-  },
-};
+import { History, Search, Filter } from "lucide-react";
+import type { Props } from "../types/MOA";
+import type { AuditEntry, FlatAudit } from "../types/Audit";
+import { OP_STYLES } from "../utils/Theme";
 
 export const AuditPage: React.FC<Props> = ({ moas }) => {
   const [search, setSearch] = useState("");
@@ -269,7 +241,6 @@ export const AuditPage: React.FC<Props> = ({ moas }) => {
               )}
               {filtered.map((entry, i) => {
                 const op = OP_STYLES[entry.operation];
-                const OpIcon = op.icon;
                 return (
                   <motion.tr
                     key={`${entry.moaId}-${i}`}
@@ -320,9 +291,7 @@ export const AuditPage: React.FC<Props> = ({ moas }) => {
                           color: op.text,
                           border: `1px solid ${op.border}`,
                         }}
-                      >
-                        <OpIcon size={11} /> {entry.operation}
-                      </span>
+                      ></span>
                     </td>
                     <td
                       style={{
