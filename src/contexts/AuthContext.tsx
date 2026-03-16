@@ -16,18 +16,11 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "../lib/firebase";
-
 import toast from "react-hot-toast";
 import type { AppUser } from "../types/AppUser";
 import type { UserRole } from "../types/UserRole";
-
-interface AuthContextType {
-  currentUser: AppUser | null;
-  firebaseUser: FirebaseUser | null;
-  loading: boolean;
-  signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
-}
+import type { AuthContextType } from "../types/AuthContextType";
+import { DEFAULT_ROLE, UID_ROLES } from "../types/Roles";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -37,15 +30,7 @@ export const useAuth = () => {
   return ctx;
 };
 
-const UID_ROLES: Record<string, UserRole> = {
-  "2AwrmRHKM6Rqlud8pTFpQAtPteu2": "admin",
-  // add more as needed...
-};
-// ─────────────────────────────────────────────────────────────────────────────
 
-const DEFAULT_ROLE: UserRole = "student";
-
-// Only @neu.edu.ph accounts are allowed
 const isNEUEmail = (email: string): boolean => {
   return email.endsWith("@neu.edu.ph");
 };
@@ -54,7 +39,6 @@ const getRoleForUser = (uid: string): UserRole => {
   return UID_ROLES[uid] ?? DEFAULT_ROLE;
 };
 
-// Deletes the Firestore user doc and Firebase Auth account
 const purgeNonNEUAccount = async (fbUser: FirebaseUser) => {
   try {
     // Delete Firestore user document
@@ -64,13 +48,13 @@ const purgeNonNEUAccount = async (fbUser: FirebaseUser) => {
       await deleteDoc(userRef);
     }
   } catch {
-    // Firestore delete may fail silently — proceed to delete auth account
+
   }
   try {
-    // Delete Firebase Auth account
+
     await deleteUser(fbUser);
   } catch {
-    // deleteUser can fail if the session is too old — sign out as fallback
+  
     await firebaseSignOut(auth);
   }
 };
