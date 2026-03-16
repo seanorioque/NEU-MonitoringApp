@@ -25,14 +25,16 @@ export type MOAStatus =
   | 'Other';
 
   export type College =
+  | 'COA'
   | 'CAS'
   | 'CBA'
-  | 'CCS'
+  | 'CC'
+  | 'CICS'
+  | 'CCrim'
+  | 'CEd'
   | 'CEA'
-  | 'CED'
-  | 'CCJE'
-  | 'CN'
-  | 'CAUP'
-  | 'CFAD'
-  | 'CITHM'
-  | 'Graduate School';
+  | 'CMedtech'
+  | 'CMidw'
+  | 'CMus'
+  |  'CN'
+  |  'CPT';

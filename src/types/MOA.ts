@@ -24,6 +24,7 @@ export interface Props {
   moas: MOA[];
 }
 
+
 export type MOAStatusGroup = "APPROVED" | "PROCESSING" | "EXPIRED" | "EXPIRING";
 
 export const getStatusGroup = (status: MOAStatus): MOAStatusGroup => {

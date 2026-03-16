@@ -1,5 +1,5 @@
 import type { College } from "./types";
 
 export const COLLEGES: College[] = [
-  'CAS', 'CBA', 'CCS', 'CEA', 'CED', 'CCJE', 'CN', 'CAUP', 'CFAD', 'CITHM', 'Graduate School',
+  'CAS','CBA','CC','CCrim','CEA','CEd','CICS','CMedtech','CMidw','CMus','COA','CN', 'CPT'
 ];
