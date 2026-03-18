@@ -130,3 +130,6 @@ firebase deploy --only hosting
 - [ ] Deploy Firestore security rules
 - [ ] Create initial admin user manually in Firestore (set `role: 'admin'`)
 - [ ] Add Firestore indexes for better query performance
+
+## WEBSITE LINK 
+[NEU MONITORING APP](neu-monitoring-app.vercel.app)
