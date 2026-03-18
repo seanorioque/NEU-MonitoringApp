@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import type { AppUser } from "../types/AppUser";
 import type { UserRole } from "../types/UserRole";
 import type { AuthContextType } from "../types/AuthContextType";
-import { DEFAULT_ROLE, UID_ROLES } from "../types/Roles";
+import { DEFAULT_ROLE, UID_ROLES, EMAIL_ROLES } from "../types/Roles";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -35,8 +35,8 @@ const isNEUEmail = (email: string): boolean => {
   return email.endsWith("@neu.edu.ph");
 };
 
-const getRoleForUser = (uid: string): UserRole => {
-  return UID_ROLES[uid] ?? DEFAULT_ROLE;
+const getRoleForUser = (uid: string, email: string): UserRole => {
+  return UID_ROLES[uid] ?? EMAIL_ROLES[email] ?? DEFAULT_ROLE;
 };
 
 const purgeNonNEUAccount = async (fbUser: FirebaseUser) => {
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           try {
             const userRef = doc(db, "users", fbUser.uid);
             const snap = await getDoc(userRef);
-            const assignedRole = getRoleForUser(fbUser.uid);
+            const assignedRole = getRoleForUser(fbUser.uid, email);
 
             if (snap.exists()) {
               const data = snap.data() as AppUser;
@@ -139,7 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               email,
               displayName: fbUser.displayName || "User",
               photoURL: fbUser.photoURL || "",
-              role: getRoleForUser(fbUser.uid),
+              role: getRoleForUser(fbUser.uid, email),
               isBlocked: false,
               createdAt: new Date(),
               lastLogin: new Date(),
