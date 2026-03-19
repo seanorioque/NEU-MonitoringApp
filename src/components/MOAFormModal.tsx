@@ -37,7 +37,7 @@ const STATUS_GROUPS = {
   "EXPIRING / EXPIRED": ALL_STATUSES.filter((s) => s.startsWith("EXPIR")),
 };
 
-// ── Extracted outside component to prevent remount on every keystroke ──
+
 
 interface FieldProps {
   icon: React.ElementType;
