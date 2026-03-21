@@ -132,4 +132,4 @@ firebase deploy --only hosting
 - [ ] Add Firestore indexes for better query performance
 
 ## WEBSITE LINK 
-[NEU MONITORING APP](neu-monitoring-app.vercel.app)
+[NEU MONITORING APP](https://neu-monitoring-app.vercel.app/)
